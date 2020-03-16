@@ -6,6 +6,10 @@ data "aws_subnet_ids" "all" {
   vpc_id = data.aws_vpc.default.id
 }
 
+locals {
+  ansible_ssh_suffix = " ansible_ssh_user=ec2-user ansible_connection=ssh ansible_ssh_private_key_file=server.key\n"
+}
+
 data "aws_ami" "amazon_linux" {
   most_recent = true
 
@@ -66,13 +70,19 @@ module "ec2" {
 
 }
 
+###################################
+# Save ssh private key in file
+###################################
 resource "local_file" "private_key" {
   filename = "server.key"
   content  = tls_private_key.this.private_key_pem
 }
-
-
-output "servers_ips" {
-  value = module.ec2.public_ip[*]
+###################################
+# Generate .hosts file for ansible
+###################################
+resource "local_file" "hosts" {
+  content = "[workers]\n${join(local.ansible_ssh_suffix, module.ec2.public_ip)} ${local.ansible_ssh_suffix}\n"
+  filename = "${path.root}/.hosts"
 }
+
 

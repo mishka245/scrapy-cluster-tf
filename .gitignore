@@ -32,3 +32,4 @@ override.tf.json
 
 
 server.key
+.hosts
