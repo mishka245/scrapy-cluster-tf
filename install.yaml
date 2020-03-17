@@ -1,0 +1,11 @@
+---
+- hosts: workers
+  become: yes
+  remote_user: ec2-user
+  tasks:
+  - name: install packages
+    yum: name={{item}} state=installed
+    with_items:
+      - git
+      - python36
+      - python-virtualenv

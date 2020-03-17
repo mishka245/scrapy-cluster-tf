@@ -1,0 +1,20 @@
+---
+  - name: Clone project and run
+    hosts: workers
+    become: yes
+    remote_user: ec2-user
+    vars_files:
+       - secrets.yaml
+    vars:
+       - destdir: /apps/crawler
+    tasks:
+    - name: Download scrapy project from repository
+      git:
+        repo: "{{ repository }}"
+        dest: "{{ destdir }}"
+
+    - name: Change the ownership of the directory
+      file:
+       path: "{{ destdir }}"
+       owner: "ec2-user"
+      register: chgrpout

@@ -71,11 +71,13 @@ module "ec2" {
 }
 
 ###################################
-# Save ssh private key in file
+# Save ssh private and public key in file
 ###################################
 resource "local_file" "private_key" {
   filename = "server.key"
   content  = tls_private_key.this.private_key_pem
+  file_permission = "0400"
+
 }
 ###################################
 # Generate .hosts file for ansible
