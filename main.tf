@@ -71,11 +71,11 @@ module "ec2" {
 }
 
 ###################################
-# Save ssh private and public key in file
+# Save ssh private key in file
 ###################################
 resource "local_file" "private_key" {
-  filename = "server.key"
-  content  = tls_private_key.this.private_key_pem
+  filename        = "server.key"
+  content         = tls_private_key.this.private_key_pem
   file_permission = "0400"
 
 }
@@ -83,7 +83,7 @@ resource "local_file" "private_key" {
 # Generate .hosts file for ansible
 ###################################
 resource "local_file" "hosts" {
-  content = "[workers]\n${join(local.ansible_ssh_suffix, module.ec2.public_ip)} ${local.ansible_ssh_suffix}\n"
+  content  = "[workers]\n${join(local.ansible_ssh_suffix, module.ec2.public_ip)} ${local.ansible_ssh_suffix}\n"
   filename = "${path.root}/.hosts"
 }
 
@@ -95,6 +95,6 @@ resource "aws_elasticache_cluster" "elasticache_cluster" {
   num_cache_nodes      = 1
   parameter_group_name = "default.redis3.2"
   engine_version       = "3.2.10"
-  security_group_ids = [module.security_group.this_security_group_id]
+  security_group_ids   = [module.security_group.this_security_group_id]
   port                 = 6379
 }
